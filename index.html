@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Fani Latifah">
+    <title>Lentera Nusantara - Sejarah Asik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel warna biar gampang gantinya kalau mau *custom* */
+        :root {
+            --merah: #FF6B6B; 
+            --tosca: #4ECDC4; 
+            --kuning: #FFE66D;
+            --putih: #FFFFFF; 
+            --bg-body: #F0F8FF;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-body);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- Trik Layar Pembuka (Splash Screen) --- */
+        #layarPembuka {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--merah), #FF8E8E);
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            color: white;
+        }
+
+        #layarPembuka h1 {
+            font-family: 'Fredoka One', cursive; font-size: 3rem; margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        #layarPembuka p { font-size: 1.5rem; margin-bottom: 40px; }
+
+        .tombol-mulai-gede {
+            padding: 20px 40px; font-size: 1.5rem; background: var(--kuning);
+            border: none; border-radius: 50px; cursor: pointer;
+            font-family: 'Fredoka One', cursive; color: var(--merah);
+            box-shadow: 0 8px 0 #d4c04d; transition: 0.2s;
+            animation: naikturun 2s infinite;
+        }
+        
+        .tombol-mulai-gede:active { transform: translateY(8px); box-shadow: 0 0 0 #d4c04d; }
+
+        @keyframes naikturun { 
+            0%, 100% {transform: translateY(0);} 
+            50% {transform: translateY(-10px);} 
+        }
+
+        /* --- Sisa Desain Web Utamanya --- */
+        #wadahUtama { width: 100%; display: none; /* Disembunyiin dulu sampai tombol diklik */ }
+
+        header {
+            background: linear-gradient(135deg, var(--merah), #FF8E8E);
+            width: 100%; padding: 20px; text-align: center;
+            color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative; box-sizing: border-box;
+        }
+        header h1 { font-family: 'Fredoka One', cursive; margin: 0; font-size: 2.2rem; }
+        
+        .tombol-musik {
+            position: absolute; right: 20px; top: 20px;
+            background: var(--kuning); border: none; padding: 10px;
+            border-radius: 50%; cursor: pointer; font-size: 1.5rem;
+            box-shadow: 0 4px 0 #d4c04d;
+        }
+
+        .wadah-konten { width: 95%; max-width: 900px; margin: 20px auto; }
+
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin-bottom: 30px;
+        }
+
+        .kartu-menu {
+            background: var(--putih); border-radius: 15px; padding: 15px;
+            text-align: center; cursor: pointer; border: 3px solid var(--tosca);
+            transition: all 0.3s;
+            font-family: 'Fredoka One', cursive; color: var(--tosca);
+        }
+        .kartu-menu:hover { transform: scale(1.05); background: var(--tosca); color: white; }
+
+        #layarBaca {
+            background: var(--putih); border-radius: 25px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 5px solid var(--kuning); position: relative;
+            min-height: 400px;
+        }
+
+        .judul-cerita { color: var(--merah); font-family: 'Fredoka One', cursive; font-size: 1.8rem; text-align: center; border-bottom: 3px dashed var(--kuning); padding-bottom: 15px; }
+        .teks-cerita { 
+            font-size: 1.15rem; line-height: 1.8; text-align: justify; 
+            color: #2c3e50; max-height: 400px; overflow-y: auto; padding-right: 15px; margin-bottom: 20px;
+        }
+
+        .teks-cerita::-webkit-scrollbar { width: 8px; }
+        .teks-cerita::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .teks-cerita::-webkit-scrollbar-thumb { background: var(--tosca); border-radius: 10px; }
+
+        .kotak-kuis {
+            margin-top: 30px; background: #EFFFFD; border: 2px dashed var(--tosca);
+            padding: 20px; border-radius: 20px;
+        }
+        .tombol-opsi {
+            display: block; width: 100%; padding: 15px; margin: 10px 0;
+            background: white; border: 2px solid var(--merah);
+            border-radius: 12px; cursor: pointer; font-size: 1.1rem;
+            font-family: 'Nunito', sans-serif; font-weight: bold;
+            transition: 0.2s; text-align: left;
+        }
+        .tombol-opsi:hover { background: #FFF0F0; transform: translateX(10px); }
+
+        .pesan-hasil {
+            padding: 15px; border-radius: 12px; margin-top: 15px;
+            text-align: center; font-weight: bold; display: none;
+            animation: mentul 0.5s; font-size: 1.2rem;
+        }
+
+        @keyframes mentul { 0%, 100% {transform: scale(1);} 50% {transform: scale(1.05);} }
+        
+        .maskot-lucu { width: 120px; position: absolute; bottom: -20px; right: -20px; z-index: 10; display: none; }
+
+        .tombol-lanjut {
+            background: var(--merah); color: white; border: none;
+            padding: 15px 30px; border-radius: 30px; font-family: 'Fredoka One', cursive;
+            cursor: pointer; margin-top: 20px; display: none; font-size: 1.1rem; width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LAYAR PEMBUKA (Trick biar musik bisa nyala otomatis) -->
+<div id="layarPembuka">
+    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Nusantara" alt="Mascot" style="width: 150px; margin-bottom: 20px;">
+    <h1>Lentera Nusantara</h1>
+    <p>Mari menjelajah waktu dan merangkai aksara!</p>
+    <button class="tombol-mulai-gede" onclick="gasMulai()">MULAI PETUALANGAN 🚀</button>
+</div>
+
+<!-- APLIKASI UTAMA (Awalnya ngumpet) -->
+<div id="wadahUtama">
+    <header>
+        <h1>Lentera Nusantara 🇮🇩</h1>
+        <p>Petualangan Sejarah Asik buat Kamu!</p>
+        <button class="tombol-musik" onclick="aturMusik()" title="Matiin/Nyalain Musik">🎵</button>
+    </header>
+
+    <div class="wadah-konten">
+        <!-- Menu Pilih Cerita -->
+        <div class="menu-grid">
+            <div class="kartu-menu" onclick="bukaCerita(0)">🏰 1. Era Majapahit</div>
+            <div class="kartu-menu" onclick="bukaCerita(1)">🤝 2. Sumpah Pemuda</div>
+            <div class="kartu-menu" onclick="bukaCerita(2)">📢 3. Proklamasi</div>
+            <div class="kartu-menu" onclick="bukaCerita(3)">🔥 4. Arek Surabaya</div>
+        </div>
+
+        <div id="layarBaca">
+            <!-- Sapaan Awal -->
+            <div id="layarSapaan" style="text-align: center; padding: 30px 0;">
+                <h2 style="font-family: 'Fredoka One'; color: var(--merah);">Halo Pahlawan Literasi! 🌟</h2>
+                <p style="font-size: 1.3rem;">Klik salah satu pulau di atas ya buat mulai baca ceritanya!</p>
+            </div>
+
+            <!-- Konten Cerita -->
+            <div id="kontenCerita" style="display: none;">
+                <div>
+                    <h2 id="teksJudul" class="judul-cerita"></h2>
+                    <div class="teks-cerita" id="teksMateri"></div>
+                </div>
+                
+                <div class="kotak-kuis">
+                    <p style="text-align: center; color: var(--tosca); font-family: 'Fredoka One'; margin-top: 0;">✨ KUIS INGATAN ✨</p>
+                    <p id="teksSoal" style="font-weight: bold; font-size: 1.2rem; margin-bottom: 15px;"></p>
+                    <div id="wadahOpsi"></div>
+                    <div id="pesanKuis" class="pesan-hasil"></div>
+                    <button id="tombolKembali" class="tombol-lanjut" onclick="kembaliKeAwal()">Pilih Cerita Lain ➔</button>
+                </div>
+                <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=Felix" class="maskot-lucu" id="gambarMaskot">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data cerita tetep sama panjangnya kayak tadi
+    const kumpulanCerita = [
+        {
+            judul: "Kejayaan Nusantara: Gajah Mada dan Majapahit",
+            materi: "Dahulu kala, ratusan tahun sebelum negara Indonesia lahir, ada sebuah kerajaan yang sangat besar dan makmur bernama Kerajaan Majapahit. Kerajaan ini berpusat di Jawa Timur dan dipimpin oleh seorang raja yang sangat bijaksana bernama Raja Hayam Wuruk.<br><br>Namun, kehebatan Majapahit tidak lepas dari peran seorang pahlawan yang sangat kuat dan cerdas. Namanya adalah Patih Gajah Mada. Pada masa itu, pulau-pulau di Nusantara masih terpisah-pisah dan sering berselisih satu sama lain. Gajah Mada merasa sedih melihat hal tersebut. Ia memiliki sebuah mimpi yang sangat besar: menyatukan seluruh pulau dari ujung Sumatera hingga ujung Papua menjadi satu keluarga besar yang damai.<br><br>Saat ia diangkat menjadi Mahapatih (pejabat tertinggi di bawah raja), Gajah Mada mengucapkan sebuah janji yang sangat suci di hadapan banyak orang. Janji itu dikenal dengan nama <b>Sumpah Palapa</b>. Dalam sumpahnya, Gajah Mada berkata dengan suara lantang bahwa ia tidak akan pernah beristirahat, tidak akan menikmati kemewahan, dan tidak akan memakan buah palapa (rempah-rempah kenikmatan dunia) sebelum seluruh Nusantara berhasil disatukan di bawah bendera Majapahit.<br><br>Banyak orang yang awalnya meragukan janji tersebut. Namun, Gajah Mada membuktikannya dengan kerja keras tanpa henti. Berkat keberanian dan kepintarannya menyusun strategi, perlahan-lahan kerajaan-kerajaan kecil di berbagai pulau bersedia bersatu. Mereka menyadari bahwa dengan bersatu, mereka akan menjadi bangsa yang kuat dan tidak mudah dikalahkan oleh musuh dari luar. Sumpah Palapa inilah yang menjadi cikal bakal dari persatuan bangsa kita, sebuah bukti bahwa tekad yang kuat dapat merangkai perbedaan menjadi sebuah peradaban yang hebat!",
+            soal: "Apakah janji suci yang diucapkan oleh Patih Gajah Mada untuk menyatukan seluruh pulau di Nusantara?",
+            pilihan: ["Sumpah Pemuda", "Sumpah Palapa", "Sumpah Prajurit", "Sumpah Sakti"],
+            jawabanBenar: 1,
+            infoTambahan: "Luar Biasa! Sumpah Palapa adalah bukti tekad kuat Gajah Mada menyatukan Nusantara."
+        },
+        {
+            judul: "Cahaya Kebangkitan: Lahirnya Sumpah Pemuda",
+            materi: "Bayangkan kamu hidup di masa ketika penjajah berkuasa di tanah air kita. Selama ratusan tahun, bangsa Indonesia berjuang melawan penjajah, tetapi selalu kalah. Mengapa? Karena saat itu, nenek moyang kita masih berjuang sendiri-sendiri. Orang Jawa hanya membela tanah Jawa, orang Sumatera membela Sumatera, begitu juga daerah lainnya. Penjajah sangat mudah mengalahkan mereka dengan taktik adu domba.<br><br>Namun, pada awal abad ke-20, para pemuda Indonesia mulai bersekolah dan menyadari satu hal yang sangat penting: <i>Kita tidak akan menang jika kita tidak bersatu!</i><br><br>Maka, pada bulan Oktober tahun 1928, pemuda-pemudi dari seluruh penjuru daerah berbondong-bondong datang ke Jakarta. Ada Jong Java (pemuda Jawa), Jong Sumatranen Bond (pemuda Sumatera), Jong Ambon, Jong Minahasa, dan banyak lagi. Mereka mengadakan rapat besar yang disebut Kongres Pemuda II. Di sanalah keajaiban terjadi.<br><br>Pada tanggal 28 Oktober 1928, para pemuda ini membuang semua rasa ego kedaerahan mereka. Mereka berdiri tegap dan mengikrarkan janji setia yang kini kita kenal sebagai <b>Sumpah Pemuda</b>. Mereka berjanji: Bertumpah darah yang satu, tanah air Indonesia; Berbangsa yang satu, bangsa Indonesia; dan yang paling penting, Menjunjung bahasa persatuan, <b>Bahasa Indonesia</b>.<br><br>Bahasa Indonesia dipilih agar semua suku bangsa yang berbeda-beda bisa saling berbicara dan mengerti satu sama lain. Pada hari yang sama, lagu 'Indonesia Raya' ciptaan W.R. Supratman dimainkan untuk pertama kalinya menggunakan biola. Sejak hari itu, seluruh rakyat Nusantara merangkai aksara dan semangat yang sama: Kita adalah satu bangsa, Bangsa Indonesia!",
+            soal: "Menurut teks di atas, mengapa pada awalnya bangsa Indonesia selalu kalah melawan penjajah?",
+            pilihan: ["Karena penjajah terlalu banyak", "Karena bangsa Indonesia tidak punya senjata", "Karena bangsa Indonesia berjuang sendiri-sendiri", "Karena bangsa Indonesia takut"],
+            jawabanBenar: 2,
+            infoTambahan: "Tepat sekali! Sebelum Sumpah Pemuda, kita berjuang kedaerahan dan mudah diadu domba."
+        },
+        {
+            judul: "Detik-Detik Kemerdekaan: Proklamasi 1945",
+            materi: "Bulan Agustus tahun 1945 adalah bulan yang paling mendebarkan dalam sejarah Indonesia. Saat itu, tentara Jepang yang sedang menjajah Indonesia menyerah kepada tentara Sekutu. Para pemuda Indonesia mendengar berita ini melalui radio yang disembunyikan. Mereka sadar, ini adalah kesempatan emas untuk segera merdeka!<br><br>Para pemuda yang dipimpin oleh Chaerul Saleh dan Sukarni segera menemui Bung Karno dan Bung Hatta. Mereka mendesak agar kemerdekaan segera diumumkan. Tapi, Bung Karno ingin berhati-hati agar tidak terjadi pertumpahan darah. Karena tidak sabar, para pemuda 'menculik' Bung Karno dan Bung Hatta lalu membawa mereka ke sebuah daerah bernama Rengasdengklok. Tujuannya adalah untuk menjauhkan pemimpin kita dari pengaruh Jepang.<br><br>Setelah berdiskusi panjang, akhirnya disepakati bahwa Indonesia akan merdeka esok harinya. Malam itu juga, tanggal 16 Agustus, mereka berkumpul di rumah Laksamana Maeda (seorang perwira Jepang yang bersimpati pada Indonesia) untuk merumuskan naskah Proklamasi. Teks itu ditulis tangan oleh Bung Karno.<br><br>Agar teks Proklamasi terlihat resmi dan rapi, seorang tokoh pemuda bernama <b>Sayuti Melik</b> ditugaskan untuk mengetik naskah tersebut menggunakan mesin tik. Sementara itu, Ibu Fatmawati menjahit bendera pusaka Merah Putih dengan mesin jahit tangannya sendiri.<br><br>Pagi harinya, tepat pada tanggal 17 Agustus 1945 pukul 10.00 pagi, di Jalan Pegangsaan Timur No. 56, Jakarta, suasana sangat hening. Bung Karno melangkah maju dan membacakan teks Proklamasi Kemerdekaan. Suaranya lantang menembus udara, mengabarkan kepada seluruh dunia bahwa mulai hari itu, Indonesia adalah negara yang merdeka dan berdaulat. Tangis bahagia dan pekik 'Merdeka!' menggema di mana-mana.",
+            soal: "Siapakah pahlawan aksara yang bertugas mengetik naskah Proklamasi agar terlihat rapi dan resmi?",
+            pilihan: ["Mohammad Hatta", "Sayuti Melik", "Ki Hajar Dewantara", "Laksamana Maeda"],
+            jawabanBenar: 1,
+            infoTambahan: "Hebat! Sayuti Melik adalah orang yang mengetik naskah proklamasi hasil tulisan tangan Bung Karno."
+        },
+        {
+            judul: "Mempertahankan Jiwa: Arek-Arek Surabaya",
+            materi: "Banyak yang mengira setelah proklamasi kemerdekaan, perjuangan sudah selesai. Ternyata, ujian yang lebih berat baru saja dimulai. Pada akhir tahun 1945, tentara asing (Sekutu dan Belanda) datang kembali ke Indonesia. Mereka berlabuh di kota Surabaya dengan niat untuk merebut kembali kekuasaan.<br><br>Namun, mereka salah besar. Rakyat Surabaya tidak akan membiarkan kemerdekaan yang baru seumur jagung dirampas begitu saja. Ketegangan memuncak ketika bendera Belanda (Merah-Putih-Biru) dikibarkan di Hotel Yamato. Para pemuda Surabaya, yang dijuluki 'Arek-Arek Suroboyo', marah besar. Mereka memanjat hotel tersebut, merobek bagian warna biru pada bendera Belanda, sehingga yang tersisa hanya warna Merah dan Putih!<br><br>Puncak dari peristiwa ini terjadi pada bulan November. Tentara Sekutu mengeluarkan ancaman keras: Semua rakyat Surabaya harus menyerahkan senjata mereka, atau Surabaya akan dihancurkan dari darat, laut, dan udara.<br><br>Apakah rakyat Surabaya takut? Tidak sama sekali! Di sinilah muncul seorang pahlawan orator yang sangat luar biasa bernama <b>Bung Tomo</b>. Melalui siaran radio, suara Bung Tomo menggelegar ke setiap sudut kota. Ia membakar semangat para pemuda, petani, pedagang, dan para santri. *'Selama banteng-banteng Indonesia masih mempunyai darah merah yang dapat membikin secarik kain putih merah dan putih, maka selama itu kita tidak akan mau menyerah kepada siapapun juga... Merdeka atau Mati!'* teriak Bung Tomo.<br><br>Tepat pada tanggal 10 November 1945, terjadilah pertempuran yang sangat dahsyat. Rakyat Surabaya melawan tank dan pesawat tempur hanya dengan senjata seadanya dan bambu runcing. Ribuan pahlawan gugur hari itu. Keberanian dan pengorbanan Arek-Arek Surabaya membuat seluruh dunia kagum. Itulah sebabnya, tanggal 10 November selalu kita peringati sebagai <b>Hari Pahlawan</b>.",
+            soal: "Siapakah tokoh pahlawan yang membakar semangat Arek-Arek Surabaya melalui pidatonya di radio?",
+            pilihan: ["Bung Karno", "Bung Hatta", "Bung Tomo", "Jenderal Sudirman"],
+            jawabanBenar: 2,
+            infoTambahan: "Benar sekali! Orasi Bung Tomo yang berapi-api membuat rakyat berani melawan penjajah."
+        }
+    ];
+
+    let konteksAudio = null;
+    let musikNyala = false;
+
+    // FUNGSI UTAMA: Jalanin App & Musik pas Splash Screen diklik
+    function gasMulai() {
+        // Ilangin splash screen, tampilin app utama
+        document.getElementById('layarPembuka').style.display = 'none';
+        document.getElementById('wadahUtama').style.display = 'block';
+
+        // Nyalain musik otomatis karena user udah ngeklik tombol
+        if (!konteksAudio) {
+            konteksAudio = new (window.AudioContext || window.webkitAudioContext)();
+            musikNyala = true;
+            mainkanMelodi();
+            
+            // Tambahan: Bunyi 'ting' manis pas mencet tombol mulai
+            bikinEfekSuara(600, 0.2, 'sine');
+        }
+    }
+
+    function aturMusik() {
+        if (!konteksAudio) return; // kalau belum klik mulai, cuekin aja
+        musikNyala = !musikNyala;
+        if(musikNyala) mainkanMelodi();
+    }
+
+    // Nada background muter terus
+    function mainkanMelodi() {
+        if (!musikNyala) return;
+        let nada = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00]; 
+        let waktu = konteksAudio.currentTime;
+        
+        let osilator = konteksAudio.createOscillator();
+        let volume = konteksAudio.createGain();
+        osilator.type = 'sine'; 
+        osilator.frequency.setValueAtTime(nada[Math.floor(Math.random() * nada.length)], waktu);
+        
+        volume.gain.setValueAtTime(0.03, waktu); 
+        volume.gain.exponentialRampToValueAtTime(0.001, waktu + 2.0);
+        
+        osilator.connect(volume);
+        volume.connect(konteksAudio.destination);
+        
+        osilator.start();
+        osilator.stop(waktu + 2.0);
+        
+        setTimeout(() => { if(musikNyala) mainkanMelodi(); }, 1500);
+    }
+
+    function bukaCerita(indeks) {
+        document.getElementById('layarSapaan').style.display = 'none';
+        document.getElementById('kontenCerita').style.display = 'block';
+        document.getElementById('gambarMaskot').style.display = 'block';
+        
+        let dataCerita = kumpulanCerita[indeks];
+        
+        document.getElementById('teksJudul').innerHTML = dataCerita.judul;
+        document.getElementById('teksMateri').innerHTML = dataCerita.materi;
+        document.getElementById('teksSoal').innerText = dataCerita.soal;
+        
+        const wadahOpsinya = document.getElementById('wadahOpsi');
+        wadahOpsinya.innerHTML = '';
+        
+        dataCerita.pilihan.forEach((pilihanTeks, urutan) => {
+            const tombol = document.createElement('button');
+            tombol.className = 'tombol-opsi';
+            tombol.innerText = pilihanTeks;
+            tombol.onclick = () => periksaJawaban(urutan, dataCerita.jawabanBenar, dataCerita.infoTambahan, tombol);
+            wadahOpsinya.appendChild(tombol);
+        });
+
+        document.getElementById('pesanKuis').style.display = 'none';
+        document.getElementById('tombolKembali').style.display = 'none';
+        
+        document.getElementById('teksMateri').scrollTop = 0; // Balik ke atas
+        
+        if(konteksAudio) bikinEfekSuara(440, 0.1, 'triangle'); // bunyi klik
+    }
+
+    function periksaJawaban(jawabanUser, kunciJawaban, pesanSukses, elemenTombol) {
+        const tempatPesan = document.getElementById('pesanKuis');
+        tempatPesan.style.display = 'block';
+        
+        const semuaTombol = document.querySelectorAll('.tombol-opsi');
+        semuaTombol.forEach(t => t.style.pointerEvents = 'none');
+
+        if (jawabanUser === kunciJawaban) {
+            tempatPesan.innerHTML = "🌟 <b>" + pesanSukses + "</b>";
+            tempatPesan.style.background = "#D4EDDA"; tempatPesan.style.color = "#155724";
+            elemenTombol.style.background = "#D4EDDA";
+            elemenTombol.style.borderColor = "#28a745";
+            bikinEfekSuara(523.25, 0.4, 'sine'); // Bener
+            document.getElementById('tombolKembali').style.display = 'inline-block';
+        } else {
+            tempatPesan.innerHTML = "❌ <b>Ups, kurang tepat!</b><br>Ayo scroll ke atas dan baca ceritanya dengan teliti lagi ya!";
+            tempatPesan.style.background = "#F8D7DA"; tempatPesan.style.color = "#721C24";
+            elemenTombol.style.background = "#F8D7DA";
+            elemenTombol.style.borderColor = "#dc3545";
+            bikinEfekSuara(200, 0.4, 'sawtooth'); // Salah
+            
+            setTimeout(() => {
+                semuaTombol.forEach(t => {
+                    t.style.pointerEvents = 'auto';
+                    t.style.background = 'white';
+                    t.style.borderColor = 'var(--merah)';
+                });
+                tempatPesan.style.display = 'none';
+            }, 2500);
+        }
+    }
+
+    function bikinEfekSuara(frekuensi, durasi, tipeSuara) {
+        if(!konteksAudio) return;
+        let osilator = konteksAudio.createOscillator();
+        let volume = konteksAudio.createGain();
+        osilator.type = tipeSuara;
+        osilator.frequency.setValueAtTime(frekuensi, konteksAudio.currentTime);
+        volume.gain.setValueAtTime(0.1, konteksAudio.currentTime);
+        volume.gain.exponentialRampToValueAtTime(0.0001, konteksAudio.currentTime + durasi);
+        osilator.connect(volume); volume.connect(konteksAudio.destination);
+        osilator.start(); osilator.stop(konteksAudio.currentTime + durasi);
+    }
+
+    function kembaliKeAwal() {
+        document.getElementById('layarSapaan').style.display = 'block';
+        document.getElementById('kontenCerita').style.display = 'none';
+        document.getElementById('gambarMaskot').style.display = 'none';
+    }
+</script>
+</body>
+</html>
